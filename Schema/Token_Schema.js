@@ -12,5 +12,5 @@ const F_pass_token = new mongoose.Schema(
   },
   { timestamps: true }
 );
-const F_token = mongoose.model("F_token", F_pass_token);
+const F_token = mongoose.model("Reset_token", F_pass_token);
 module.exports = F_token;

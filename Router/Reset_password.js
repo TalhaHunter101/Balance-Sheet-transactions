@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const F_token = require("../Schema/F_Pass_token");
-const User = require("../Schema/user");
+const F_token = require("../Schema/Token_Schema");
+const User = require("../Schema/User_schema");
 
 router.post("", (req, res) => {
   console.log(req.body);

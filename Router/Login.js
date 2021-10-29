@@ -1,39 +1,47 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-const emailvalidator = require("../validator_function");
-const User = require("../Schema/user");
+const bcrypt = require("bcrypt");
+const Evalid = require("../email_validator");
+const User = require("../Schema/User_schema");
 
-router.post("", (req, res) => {
+router.use("", (req, res) => {
   console.log(req.body);
-  const { email, password } = req.body;
-  //res.send(`body recieved ${(email, password)}`);
 
-  if (!email || !password) {
-    return res.status(300).json({ msg: "Please enter all fields" });
-  } else if (emailvalidator.validateEmailAddress(email) === -1) {
-    return res.send("Email not valid:: enter again");
-  } else if (password.length < 6) {
-    return res.status(201).json({
-      msg: "Password must be at least 6 characters: incorrewct password format ",
-    });
-  } else {
-    User.findOne({ email: email }).then((user) => {
-      if (!user) {
-        res.status(200).send("You are not registered:: Go Signup...");
-      } else {
-        const verifypass = bcrypt.compareSync(password, user.password);
-
-        if (!verifypass || password == "" || password == undefined) {
-          res.status(200).send("Login password incorrect or missing");
-          return;
-          //console.log(verifypass);
-        } else if (verifypass) {
-          res.status(201).send(`Login succesfull. Welcome ${user.name}`);
-        }
-      }
-    });
+  if (req.body.email == "" || req.body.email == undefined) {
+    res.send("Missing Email:: Try again");
+    return;
+  } else if (req.body.password == "" || req.body.password == undefined) {
+    res.send("Missing Password:: Try again");
+    return;
+  } else if (req.body.password.length < 6) {
+    res.send("password should be at least 6 characters");
+    return;
+  } else if (Evalid.validateEmailAddress(req.body.email) === -1) {
+    res.send("Incorrect email :: Enter again");
+    return;
   }
+
+  User.findOne({ Email: req.body.email }).then((user) => {
+    // console.log(user);
+    if (user || user != null) {
+      // user Found in record
+      //console.log(`req ${req.body.password}      db      ${user.Password}`);
+
+      const verifypass = bcrypt.compareSync(req.body.password, user.Password);
+
+      if (!verifypass) {
+        res.status(200).send("Login password incorrect or missing");
+        return;
+        //console.log(verifypass);
+      } else if (verifypass) {
+        res.status(201).send(`Login succesfull. Welcome ${user.Full_name}`);
+      }
+      //res.send(`Welcome :: ${user.Full_name} \n You are logged in...`);
+    } else {
+      res.send("You are not registered. Go Signup first");
+      return;
+    }
+  });
 });
 
 module.exports = router;

@@ -1,8 +1,7 @@
-const express = require("express");
 const mongoose = require("mongoose");
 
 mongoose.connect(
-  "mongodb+srv://Talha:talha@cluster0.41roq.mongodb.net/LoginApp",
+  "mongodb+srv://Talha:talha@cluster0.41roq.mongodb.net/Authentication(2)",
   {
     useNewUrlParser: true,
   }
@@ -14,5 +13,5 @@ conn.on("connected", function () {
 conn.on("disconnected", function () {
   console.log("database is disconnected successfully");
 });
-conn.on("error", console.error.bind(console, "Databse connection error:"));
+conn.on("error", console.error.bind(console, "connection error:"));
 module.exports = conn;

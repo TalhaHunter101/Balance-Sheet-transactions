@@ -1,12 +1,9 @@
 const express = require("express");
-const rout = express.Router();
-const User = require("../Schema/user");
-const F_token = require("../Schema/F_Pass_token");
-const emailvalidator = require("../validator_function");
-const { model } = require("mongoose");
-const app = express();
+const router = express.Router();
+const ForgetToken = require("../Schema/Token_Schema");
+const Evalid = require("../email_validator");
+const User = require("../Schema/User_schema");
 const mailgun = require("mailgun-js");
-require("dotenv").config();
 
 var token;
 const DOMAIN = "sandbox582feb5a5e3746b58635b2b00cecbf75.mailgun.org";
@@ -15,14 +12,14 @@ const mg = mailgun({
   domain: DOMAIN,
 });
 
-rout.post("", (req, res) => {
+router.post("", (req, res) => {
   const { email } = req.body;
   console.log(req.body);
   //res.send(`body recieved ${(email, password)}`);
 
   if (!email) {
     return res.status(300).json({ msg: "Please provide email" });
-  } else if (emailvalidator.validateEmailAddress(email) === -1) {
+  } else if (Evalid.validateEmailAddress(email) === -1) {
     return res.send("Email not valid:: Enter again");
   } else {
     User.findOne({ email: email })
@@ -31,7 +28,7 @@ rout.post("", (req, res) => {
           res.status(200).send("You are not registered:: Go Signup...");
           return;
         } else {
-          F_token.findOne({ Owner_id: user._id })
+          ForgetToken.findOne({ Owner_id: user._id })
             .then(function (F_id) {
               if (F_id) {
                 res
@@ -48,12 +45,13 @@ rout.post("", (req, res) => {
                   text: `Your password reset token is  :::   ${token}`,
                 };
 
-                let F_Token = new F_token({
+                let F_token = new ForgetToken({
                   Token: token,
                   Owner_id: user._id,
                 });
 
-                F_Token.save().then((user) => {
+                F_token.save().then((user) => {
+                 
                   mg.messages().send(data, function (error, body) {
                     console.log(body);
                   });
@@ -80,4 +78,4 @@ rout.post("", (req, res) => {
   }
 });
 
-module.exports = rout;
+module.exports = router;
