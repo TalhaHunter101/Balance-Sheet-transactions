@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 mongoose.connect(
   "mongodb+srv://Talha:talha@cluster0.41roq.mongodb.net/Authentication(3)",
   {

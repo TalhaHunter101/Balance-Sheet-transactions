@@ -4,8 +4,8 @@ const Evalid = require("../email_validator");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const mailgun = require("mailgun-js");
-
 var express = require("express");
+
 var app = express();
 app.use(
   express.urlencoded({
@@ -56,7 +56,6 @@ exports.signup = function (req, res) {
     }
   });
 };
-
 exports.reset_pass = function (req, res) {
   console.log(req.body);
   const { password, c_password, Token } = req.body;
@@ -108,7 +107,6 @@ exports.reset_pass = function (req, res) {
       .catch();
   }
 };
-
 exports.login = function (req, res) {
   console.log(req.body);
 
@@ -145,7 +143,6 @@ exports.login = function (req, res) {
     }
   });
 };
-
 exports.forget_pass = function (req, res) {
   const { email } = req.body;
   console.log(req.body);
@@ -217,11 +214,3 @@ exports.forget_pass = function (req, res) {
       });
   }
 };
-
-// exports.myFunc1 = function (req, res) {
-//   res.send("Hello 1");
-// };
-
-// exports.myFunc2 = function (req, res) {
-//   res.send("Hello 2");
-// };
