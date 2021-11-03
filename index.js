@@ -1,16 +1,9 @@
 const express = require("express");
 const app = express();
-const PORT = 4000;
-const db = require("./DB/MongoConn");
-const csrf = require("csrf");
-const expressSession = require("express-session");
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const PORT = 6000;
+const mongo = require("./Database/mongo_conn");
 
-app.use("/Login", require("./Router/Login"));
-app.use("/Signup", require("./Router/Signup"));
-app.use("/Reset", require("./Router/Reset_password"));
-app.use("/Forget", require("./Router/Forget_password"));
+app.use("/user", require("./Router/user_router"));
 
 app.listen(PORT, () => {
   console.log(`Server is starting at : ${PORT} `);

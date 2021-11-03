@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const F_pass_token = new mongoose.Schema(
   {
     Token: {
-      type: Number,
+      type: String,
       required: true,
     },
     Owner_id: {
