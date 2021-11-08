@@ -36,7 +36,7 @@ exports.signup = function (req, res) {
   }
   User.findOne({ Email: req.body.Email }).then((user) => {
     // console.log(user);
-    if (user || user != null) {
+    if (!user || user != null) {
       return res.status(500).send("You are already registered...");
     } else {
       let NewUser = new User({
@@ -155,11 +155,11 @@ exports.forget_pass = function (req, res) {
   });
 
   if (!email) {
-    return res.status(300).json({ msg: "Please provide email" });
+    return res.status(300).json({ msg: "Please provide email address" });
   } else if (Evalid.validateEmailAddress(email) === -1) {
     return res.send("Email not valid:: Enter again");
   } else {
-    User.findOne({ email: email })
+    User.findOne({ Email: email })
       .then((user) => {
         if (!user) {
           res.status(200).send("You are not registered:: Go Signup...");

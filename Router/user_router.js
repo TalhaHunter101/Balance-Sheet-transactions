@@ -7,13 +7,7 @@ router.use(
   })
 );
 
-// middleware that is specific to this router
-router.use(function timeLog(req, res, next) {
-  console.log("Time: ", Date.now());
-  next();
-});
-
-//routing to controller
+//routing User  to controller
 router.post("/signup", userController.signup);
 router.post("/resetPass", userController.reset_pass);
 router.post("/ForgetPass", userController.forget_pass);
