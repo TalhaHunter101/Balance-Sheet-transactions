@@ -4,11 +4,11 @@ const Transaction = new mongoose.Schema(
     bank_id: {
       type: String,
       required: true,
-    },
+    }, 
     Expense: [
       {
         ammount: { type: Number, required: false },
-        Date: { type: Date, required: false },
+        Date: { type: String, required: false },
         description: { type: String, required: false },
         category: { type: String, required: false },
       },
@@ -17,7 +17,7 @@ const Transaction = new mongoose.Schema(
     Income: [
       {
         ammount: { type: Number, required: false },
-        Date: { type: Date, required: false },
+        Date: { type: String, required: false },
         description: { type: String, required: false },
         category: { type: String, required: false },
       },

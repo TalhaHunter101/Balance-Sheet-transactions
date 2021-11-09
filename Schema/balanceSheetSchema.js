@@ -7,7 +7,7 @@ const BalanceSheet = new mongoose.Schema(
     },
     salary: {
       default: false,
-      Transaction: [{ Type: String }],
+      Transaction: [{ type: String }],
       type: { type: Boolean, default: false },
       balance: {
         type: Number,
@@ -16,7 +16,7 @@ const BalanceSheet = new mongoose.Schema(
     },
     current: {
       default: false,
-      Transaction: [{ Type: String }],
+      Transaction: [{ type: String }],
       type: { type: Boolean, default: false },
       balance: {
         type: Number,

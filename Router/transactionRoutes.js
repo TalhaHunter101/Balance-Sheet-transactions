@@ -11,6 +11,7 @@ router.use(
 router.post("/createtransaction", transactionController.Creattransaction);
 
 router.post("/findBycategory", transactionController.findbycategory);
-// router.post("/createTransaction", bankController.createTransaction);
+
+router.post("/findbydate", transactionController.findbydate);
 
 module.exports = router;

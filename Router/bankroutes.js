@@ -9,8 +9,7 @@ router.use(
 
 //routing User  to controller
 router.post("/CreateBankAccount", bankController.CreatBalanceSheet);
-
-// router.post("/ViewBankAccount", bankController.ViewBankAccount);
-// router.post("/createTransaction", bankController.createTransaction);
+router.post("/deactivatebalancesheet", bankController.deactivatebalanceSheet);
+router.post("/activatebalancesheet", bankController.ActivateBalancesheet);
 
 module.exports = router;
