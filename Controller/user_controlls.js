@@ -1,4 +1,5 @@
 const User = require("../Schema/User_schema");
+const Bacocunt = require("../Schema/bankAccount");
 const token = require("../Schema/Token_schema");
 const Evalid = require("../email_validator");
 const bcrypt = require("bcrypt");
@@ -14,6 +15,7 @@ app.use(
 );
 app.use(express.json());
 
+// user Sign up and Sign in controlls
 exports.signup = function (req, res) {
   console.log(req.body);
   //res.send("data recieved");
@@ -213,4 +215,24 @@ exports.forget_pass = function (req, res) {
         res.end();
       });
   }
+};
+
+// user value controls
+
+exports.getallAccounts = (req, res) => {
+  
+  //  User.find({ Email: req.body.email })
+  //   .populate("BankAccount")
+  //   .exec((err, accounts) => {
+  //     console.log("BankAccounts are: " + accounts);
+  //     if (err) {
+  //       console.log(err);
+  //     }
+  //   });
+  res.json({ mesh: "getting all acoount" });
+};
+exports.createU = async (req, res) => {
+  let newUser = new User(req.body);
+  let saveUser = await newUser.save();
+  res.json(saveUser);
 };

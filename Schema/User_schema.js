@@ -20,8 +20,16 @@ const UserSchma = new schma({
     type: String,
     required: [true, "Please add password"],
   },
+
+  BankAccount: [
+    {
+      type: schma.Types.ObjectId,
+      ref: "bAccount",
+    },
+  ],
 });
 
+// password hashing before saving bycrypt code
 UserSchma.pre("save", function (next) {
   const user = this;
 
@@ -45,5 +53,4 @@ UserSchma.pre("save", function (next) {
   }
 });
 
-const user = mongoose.model("User", UserSchma);
-module.exports = user;
+module.exports = mongoose.model("User", UserSchma);

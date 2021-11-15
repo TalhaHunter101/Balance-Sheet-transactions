@@ -1,27 +1,16 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const Transaction = new mongoose.Schema(
   {
     bank_id: {
-      type: String,
-      required: true,
-    }, 
-    Expense: [
-      {
-        ammount: { type: Number, required: false },
-        Date: { type: String, required: false },
-        description: { type: String, required: false },
-        category: { type: String, required: false },
-      },
-    ],
-
-    Income: [
-      {
-        ammount: { type: Number, required: false },
-        Date: { type: String, required: false },
-        description: { type: String, required: false },
-        category: { type: String, required: false },
-      },
-    ],
+      type: Schema.Types.ObjectId,
+      ref: "bAccount",
+    },
+    T_Type: { type: String, enum: ["expense", "income"], required: true },
+    ammount: { type: Number, required: false },
+    Date: { type: String, required: false },
+    description: { type: String, required: false },
+    category: { type: String, required: false },
   },
   { timestamps: true }
 );

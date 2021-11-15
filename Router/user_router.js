@@ -13,4 +13,8 @@ router.post("/resetPass", userController.reset_pass);
 router.post("/ForgetPass", userController.forget_pass);
 router.post("/login", userController.login);
 
+// create user and bankaccount scheme
+router.post("/createU", userController.createU);
+router.post("/getbankAccount", userController.getallAccounts);
+
 module.exports = router;

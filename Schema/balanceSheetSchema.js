@@ -26,5 +26,4 @@ const BalanceSheet = new mongoose.Schema(
   },
   { timestamps: true }
 );
-const B_sheet = mongoose.model("BalanceSheet", BalanceSheet);
-module.exports = B_sheet;
+module.exports = mongoose.model("BalanceSheet", BalanceSheet);
