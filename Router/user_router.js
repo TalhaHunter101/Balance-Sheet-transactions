@@ -6,15 +6,13 @@ router.use(
     extended: true,
   })
 );
-
 //routing User  to controller
-router.post("/signup", userController.signup);
+router.post("/signup", userController.signup); // generating token
 router.post("/resetPass", userController.reset_pass);
 router.post("/ForgetPass", userController.forget_pass);
-router.post("/login", userController.login);
+router.post("/login", userController.login); // generating token
 
 // create user and bankaccount scheme
-router.post("/createU", userController.createU);
-router.post("/getbankAccount", userController.getallAccounts);
+// router.post("/createU", userController.createU);
 
 module.exports = router;

@@ -1,13 +1,15 @@
 const User = require("../Schema/User_schema");
-const Bacocunt = require("../Schema/bankAccount");
 const token = require("../Schema/Token_schema");
 const Evalid = require("../email_validator");
 const bcrypt = require("bcrypt");
+const dotenv = require("dotenv");
 const crypto = require("crypto");
 const mailgun = require("mailgun-js");
 var express = require("express");
-
+var jwt = require("jsonwebtoken");
+const config = process.env;
 var app = express();
+dotenv.config();
 app.use(
   express.urlencoded({
     extended: true,
@@ -17,9 +19,6 @@ app.use(express.json());
 
 // user Sign up and Sign in controlls
 exports.signup = function (req, res) {
-  console.log(req.body);
-  //res.send("data recieved");
-
   if (req.body.Full_name == "" || req.body.Full_name == undefined) {
     res.status(404).send("Missing Full Name: try Again");
     return;
@@ -37,22 +36,32 @@ exports.signup = function (req, res) {
     return;
   }
   User.findOne({ Email: req.body.Email }).then((user) => {
-    // console.log(user);
-    if (!user || user != null) {
-      return res.status(500).send("You are already registered...");
+    if (user) {
+      // user already present
+      return res.status(500).send("You are already registered ...");
     } else {
+      // creating new
       let NewUser = new User({
         Full_name: req.body.Full_name,
         Email: req.body.Email,
         Password: req.body.Password,
       });
+      const emil = req.body.Email;
+      const token = jwt.sign(
+        { user_id: NewUser._id, emil },
+        process.env.TOKEN_SECRET,
+        {
+          expiresIn: "2h",
+        }
+      );
       NewUser.save()
         .then((events) => {
-          res.status(200).json({ success: "You are registered:: Go to Login" });
+          res.status(200).json({
+            success: `User registered :: Your authentication token is : ${token} `,
+          });
         })
         .catch((err) => {
           console.log(err);
-          // res.send("error");
           res.end();
         });
     }
@@ -80,18 +89,16 @@ exports.reset_pass = function (req, res) {
           res.status(501).send("Token is incorrect::: Enter Again");
         } else {
           const hashpass = bcrypt.hashSync(password, 10);
-          console.log(userT.Owner_id);
 
           User.findByIdAndUpdate(
             userT.Owner_id,
             { Password: hashpass },
             (err, docx) => {
-              if (err) {
+              if (!docx) {
                 console.log(err);
                 res.send("User with token not found..");
               } else {
                 res.send("Password Changed.....");
-                console.log(userT);
                 token.findByIdAndDelete(userT._id, (err, docs) => {
                   if (err) {
                     console.log(err);
@@ -127,20 +134,31 @@ exports.login = function (req, res) {
   }
   User.findOne({ Email: req.body.email }).then((user) => {
     // console.log(user);
-    if (user || user != null) {
+    if (user) {
       // user Found in record
       const verifypass = bcrypt.compareSync(req.body.password, user.Password);
-
       if (!verifypass) {
-        res.status(500).send("Invalid Details");
+        res.status(500).send("Invalid Details:::");
         return;
         //console.log(verifypass);
       } else if (verifypass) {
-        res.status(201).send(`Login succesfull. Welcome ${user.Full_name}`);
+        const emil = req.body.email;
+        const token = jwt.sign(
+          { user_id: user._id, emil },
+          process.env.TOKEN_SECRET,
+          {
+            expiresIn: "2h",
+          }
+        );
+        res
+          .status(201)
+          .json({
+            mesg: `Login succesfull. Welcome ${user.Full_name} Your Authentication Token is : ${token}`,
+          });
       }
       //res.send(`Welcome :: ${user.Full_name} \n You are logged in...`);
     } else {
-      res.status(402).send("Invalid Details:");
+      res.status(402).send("Invalid Details:::");
       return;
     }
   });
@@ -184,12 +202,10 @@ exports.forget_pass = function (req, res) {
                   subject: "Reset Password Token",
                   text: `Your password reset token is ::: ${tooken}`,
                 };
-
                 let F_token = new token({
                   Token: tooken,
                   Owner_id: user._id,
                 });
-
                 F_token.save().then((user) => {
                   mg.messages().send(data, function (error, body) {
                     console.log(body);
@@ -215,24 +231,4 @@ exports.forget_pass = function (req, res) {
         res.end();
       });
   }
-};
-
-// user value controls
-
-exports.getallAccounts = (req, res) => {
-  
-  //  User.find({ Email: req.body.email })
-  //   .populate("BankAccount")
-  //   .exec((err, accounts) => {
-  //     console.log("BankAccounts are: " + accounts);
-  //     if (err) {
-  //       console.log(err);
-  //     }
-  //   });
-  res.json({ mesh: "getting all acoount" });
-};
-exports.createU = async (req, res) => {
-  let newUser = new User(req.body);
-  let saveUser = await newUser.save();
-  res.json(saveUser);
 };
