@@ -36,4 +36,9 @@ router.post(
   auth,
   transactionController.Delete_tansaction
 );
+router.post(
+  "/find_transaction_allfilter",
+  auth,
+  transactionController.find_transaction_filter_all
+);
 module.exports = router;

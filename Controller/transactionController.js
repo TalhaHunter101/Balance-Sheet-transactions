@@ -17,13 +17,8 @@ app.use(express.json());
 // creating transaction
 // new transaction according to new
 exports.new_transaction = function (req, res) {
-  if (req.body.email == "" || req.body.email == undefined) {
-    res.status(404).send("Missing Email: Enter Again");
-    return;
-  } else if (Evalid.validateEmailAddress(req.body.email) === -1) {
-    res.status(405).send("Incorrect email :: Enter again");
-    return;
-  } else if (req.body.amount == "" || req.body.amount == undefined) {
+  const useremail = req.user.emil;
+  if (req.body.amount == "" || req.body.amount == undefined) {
     res.status(405).send("Amount of transaction missing :: Enter again");
     return;
   } else if (req.body.amount < 0 || req.body.amount > 9999999999) {
@@ -39,13 +34,13 @@ exports.new_transaction = function (req, res) {
     res.status(400).send("Account name missing ::: Try Again ");
     return;
   } else if (req.body.t_type == "income" || req.body.t_type == "expense") {
-    User.findOne({ Email: req.body.email }).then((userU) => {
+    User.findOne({ Email: useremail }).then((userU) => {
       if (!userU || userU == null) {
         return res
           .status(500)
           .send("You are not our User... or Email is not registered.");
       } else {
-        if (userU.BankAccount == null ||userU.BankAccount == " " ) {
+        if (userU.BankAccount == null || userU.BankAccount == " ") {
           res.status(400).send("You dont have any bank Account  ");
           return;
         } else {
@@ -131,18 +126,13 @@ exports.new_transaction = function (req, res) {
 };
 
 exports.find_all_transaction_by_type = function (req, res) {
-  if (req.body.email == "" || req.body.email == undefined) {
-    res.status(404).send("Missing Email: Enter Again");
-    return;
-  } else if (Evalid.validateEmailAddress(req.body.email) === -1) {
-    res.status(405).send("Incorrect email :: Enter again");
-    return;
-  } else if (req.body.accountname == "" || req.body.accountname == undefined) {
+  const useremail = req.user.emil;
+  if (req.body.accountname == "" || req.body.accountname == undefined) {
     res.status(400).send("Account name missing ::: Try Again ");
     return;
   } else if (req.body.t_type == "income" || req.body.t_type == "expense") {
     // remember to chancge capital T on postman
-    User.findOne({ Email: req.body.email }).then((userU) => {
+    User.findOne({ Email: useremail }).then((userU) => {
       if (!userU || userU == null) {
         return res
           .status(500)
@@ -193,20 +183,15 @@ exports.find_all_transaction_by_type = function (req, res) {
 };
 
 exports.find_all_transaction_by_category = function (req, res) {
-  if (req.body.email == "" || req.body.email == undefined) {
-    res.status(404).send("Missing Email: Enter Again");
-    return;
-  } else if (Evalid.validateEmailAddress(req.body.email) === -1) {
-    res.status(405).send("Incorrect email :: Enter again");
-    return;
-  } else if (req.body.accountname == "" || req.body.accountname == undefined) {
+  const useremail = req.user.emil;
+  if (req.body.accountname == "" || req.body.accountname == undefined) {
     res.status(400).send("Account name missing ::: Try Again ");
     return;
   } else if (req.body.category == "" || req.body.category == undefined) {
     res.status(400).send("Transaction category missing ::: Try Again ");
     return;
   } else {
-    User.findOne({ Email: req.body.email }).then((userU) => {
+    User.findOne({ Email: useremail }).then((userU) => {
       if (!userU || userU == null) {
         return res
           .status(500)
@@ -251,13 +236,8 @@ exports.find_all_transaction_by_category = function (req, res) {
 };
 
 exports.Update_transaction = function (req, res) {
-  if (req.body.email == "" || req.body.email == undefined) {
-    res.status(404).send("Missing Email: Enter Again");
-    return;
-  } else if (Evalid.validateEmailAddress(req.body.email) === -1) {
-    res.status(405).send("Incorrect email :: Enter again");
-    return;
-  } else if (req.body.accountname == "" || req.body.accountname == undefined) {
+  const useremail = req.user.emil;
+  if (req.body.accountname == "" || req.body.accountname == undefined) {
     res.status(400).send("Account name missing ::: Try Again ");
     return;
   } else if (req.body.category == "" || req.body.category == undefined) {
@@ -273,7 +253,7 @@ exports.Update_transaction = function (req, res) {
     res.status(400).send("Transaction category missing ::: Try Again ");
     return;
   } else if (req.body.T_type == "income" || req.body.T_type == "expense") {
-    User.findOne({ Email: req.body.email }).then((userU) => {
+    User.findOne({ Email: useremail }).then((userU) => {
       if (!userU || userU == null) {
         return res
           .status(500)
@@ -345,13 +325,8 @@ exports.Update_transaction = function (req, res) {
 };
 
 exports.find_transaction_by_date = function (req, res) {
-  if (req.body.email == "" || req.body.email == undefined) {
-    res.status(404).send("Missing Email: Enter Again");
-    return;
-  } else if (Evalid.validateEmailAddress(req.body.email) === -1) {
-    res.status(405).send("Incorrect email :: Enter again");
-    return;
-  } else if (req.body.date_start == "" || req.body.date_start == undefined) {
+  const useremail = req.user.emil;
+  if (req.body.date_start == "" || req.body.date_start == undefined) {
     res.status(405).send("Start date is mussing :: Enter again");
     return;
   } else if (req.body.date_end == "" || req.body.date_end == undefined) {
@@ -367,7 +342,7 @@ exports.find_transaction_by_date = function (req, res) {
     res.status(400).send("Account name missing ::: Try Again ");
     return;
   } else {
-    User.findOne({ Email: req.body.email }).then((userU) => {
+    User.findOne({ Email: useremail }).then((userU) => {
       if (!userU || userU == null) {
         return res
           .status(500)
@@ -413,13 +388,9 @@ exports.find_transaction_by_date = function (req, res) {
 };
 
 exports.Delete_tansaction = function (req, res) {
-  if (req.body.email == "" || req.body.email == undefined) {
-    res.status(404).send("Missing Email: Enter Again");
-    return;
-  } else if (Evalid.validateEmailAddress(req.body.email) === -1) {
-    res.status(405).send("Incorrect email :: Enter again");
-    return;
-  } else if (req.body.accountname == "" || req.body.accountname == undefined) {
+  const useremail = req.user.emil;
+
+  if (req.body.accountname == "" || req.body.accountname == undefined) {
     res.status(400).send("Account name missing ::: Try Again ");
     return;
   } else if (req.body.T_type == "" || req.body.T_type == undefined) {
@@ -429,7 +400,7 @@ exports.Delete_tansaction = function (req, res) {
     res.status(400).send("Transaction category missing ::: Try Again ");
     return;
   } else if (req.body.T_type == "income" || req.body.T_type == "expense") {
-    User.findOne({ Email: req.body.email }).then((userU) => {
+    User.findOne({ Email: useremail }).then((userU) => {
       if (!userU || userU == null) {
         return res
           .status(500)
@@ -481,6 +452,296 @@ exports.Delete_tansaction = function (req, res) {
   } else {
     return res.json({
       mesg: "The Transaction should be either 'income or 'expense' (lowercase)'",
+    });
+  }
+};
+
+exports.find_transaction_filter_all = async (req, res) => {
+  const useremail = req.user.emil;
+  if (req.body.accountname == "" || req.body.accountname == undefined) {
+    res.status(400).send("Account name missing ::: Try Again ");
+    return;
+  } else {
+    User.findOne({ Email: useremail }).then((userU) => {
+      if (!userU || userU == null) {
+        return res
+          .status(500)
+          .send("You are not our User... or Email is not registered.");
+      } else {
+        if (userU.BankAccount == " ") {
+          res.status(400).send("You dont have any bank Account  ");
+          return;
+        } else {
+          if (
+            moment(req.body.date_start, "DD-MM-YYYY").isValid() == true &&
+            moment(req.body.date_end, "DD-MM-YYYY").isValid() == true &&
+            req.body.T_type &&
+            req.body.category
+          ) {
+            // by dates
+
+            console.log("I am date with category and type");
+            BAccount.findOne(
+              {
+                _id: { $in: userU.BankAccount },
+                accountName: req.body.accountname,
+              },
+              (err, docs) => {
+                // bank account found
+                if (docs) {
+                  // bank account found
+                  transaction.find(
+                    {
+                      _id: { $in: docs.Transaction },
+                      Date: {
+                        $gte: req.body.date_start,
+                        $lte: req.body.date_end,
+                      },
+                      T_Type: req.body.T_type,
+                      category: req.body.category,
+                    },
+                    (err, find) => {
+                      if (find) {
+                        res.send(`Your records are : ${find}`);
+                      }
+                    }
+                  );
+                } else {
+                  res.send("No record found");
+                }
+              }
+            );
+          } else if (
+            moment(req.body.date_start, "DD-MM-YYYY").isValid() == true &&
+            moment(req.body.date_end, "DD-MM-YYYY").isValid() == true &&
+            req.body.T_type &&
+            !req.body.category
+          ) {
+            // by dates
+
+            console.log("I am date with type only ");
+            BAccount.findOne(
+              {
+                _id: { $in: userU.BankAccount },
+                accountName: req.body.accountname,
+              },
+              (err, docs) => {
+                // bank account found
+                if (docs) {
+                  // bank account found
+                  transaction.find(
+                    {
+                      _id: { $in: docs.Transaction },
+                      Date: {
+                        $gte: req.body.date_start,
+                        $lte: req.body.date_end,
+                      },
+                      T_Type: req.body.T_type,
+                    },
+                    (err, find) => {
+                      if (find) {
+                        res.send(`Your records are : ${find}`);
+                      }
+                    }
+                  );
+                } else {
+                  res.send("No record found");
+                }
+              }
+            );
+          } else if (
+            moment(req.body.date_start, "DD-MM-YYYY").isValid() == true &&
+            moment(req.body.date_end, "DD-MM-YYYY").isValid() == true &&
+            req.body.category &&
+            !req.body.T_type
+          ) {
+            // by dates
+            console.log("I am date with category only");
+            BAccount.findOne(
+              {
+                _id: { $in: userU.BankAccount },
+                accountName: req.body.accountname,
+              },
+              (err, docs) => {
+                // bank account found
+                if (docs) {
+                  // bank account found
+                  transaction.find(
+                    {
+                      _id: { $in: docs.Transaction },
+                      Date: {
+                        $gte: req.body.date_start,
+                        $lte: req.body.date_end,
+                      },
+                      category: req.body.category,
+                    },
+                    (err, find) => {
+                      if (find) {
+                        res.send(`Your records are : ${find}`);
+                      }
+                    }
+                  );
+                } else {
+                  res.send("No record found");
+                }
+              }
+            );
+          } else if (
+            moment(req.body.date_start, "DD-MM-YYYY").isValid() == true &&
+            moment(req.body.date_end, "DD-MM-YYYY").isValid() == true &&
+            !req.body.category &&
+            !req.body.T_type
+          ) {
+            // by dates
+            console.log("I am date only ");
+            BAccount.findOne(
+              {
+                _id: { $in: userU.BankAccount },
+                accountName: req.body.accountname,
+              },
+              (err, docs) => {
+                // bank account found
+                if (docs) {
+                  // bank account found
+                  transaction.find(
+                    {
+                      _id: { $in: docs.Transaction },
+                      Date: {
+                        $gte: req.body.date_start,
+                        $lte: req.body.date_end,
+                      },
+                    },
+                    (err, find) => {
+                      if (find) {
+                        res.send(`Your records are : ${find}`);
+                      }
+                    }
+                  );
+                } else {
+                  res.send("No record found");
+                }
+              }
+            );
+          } else if (
+            // only category
+            req.body.category &&
+            !req.body.T_type &&
+            !req.body.date_start &&
+            !req.body.date_end
+          ) {
+            console.log("i am category only");
+            // category only
+            BAccount.findOne(
+              {
+                _id: { $in: userU.BankAccount },
+                accountName: req.body.accountname,
+              },
+              (err, docs) => {
+                // bank account found
+                if (docs) {
+                  // bank account found
+                  transaction.find(
+                    {
+                      _id: { $in: docs.Transaction },
+                      category: req.body.category,
+                    },
+                    (err, find) => {
+                      if (find) {
+                        res.send(`Your transaction by category are ${find}`);
+                      } else {
+                        res.send(`No Transaction Found `);
+                      }
+                    }
+                  );
+                } else {
+                  res.send("No record found");
+                }
+              }
+            );
+          } else if (
+            // category and type
+            req.body.category &&
+            req.body.T_type &&
+            !req.body.date_start &&
+            !req.body.date_end &&
+            (req.body.T_type == "income" || req.body.T_type == "expense")
+          ) {
+            console.log("I am category with type");
+            // category only
+            BAccount.findOne(
+              {
+                _id: { $in: userU.BankAccount },
+                accountName: req.body.accountname,
+              },
+              (err, docs) => {
+                // bank account found
+                if (docs) {
+                  // bank account found
+                  transaction.find(
+                    {
+                      _id: { $in: docs.Transaction },
+                      category: req.body.category,
+                      T_Type: req.body.T_type,
+                    },
+                    (err, find) => {
+                      if (find) {
+                        return res.send(
+                          `Your transaction by category are ${find}`
+                        );
+                      } else {
+                        res.send(`No Transaction Found `);
+                      }
+                    }
+                  );
+                } else {
+                  res.send("No record found");
+                }
+              }
+            );
+          } else if (
+            // only type
+            req.body.T_type != "" &&
+            !req.body.category &&
+            req.body.T_type != undefined &&
+            !req.body.date_start &&
+            !req.body.date_end &&
+            (req.body.T_type == "income" || req.body.T_type == "expense")
+          ) {
+            console.log("I am type only");
+            BAccount.findOne(
+              {
+                _id: { $in: userU.BankAccount },
+                accountName: req.body.accountname,
+              },
+              (err, docs) => {
+                // bank account found
+                if (docs) {
+                  // bank account found
+                  transaction.find(
+                    {
+                      _id: { $in: docs.Transaction },
+                      T_Type: req.body.T_type,
+                    },
+                    (err, find) => {
+                      if (find) {
+                        res.send(`Your transactions by type are: ${find}`);
+                      } else {
+                        res.send(`No Transaction Found `);
+                      }
+                    }
+                  );
+                } else {
+                  res.send("No record found");
+                }
+              }
+            );
+          } else {
+            res.send(
+              "Transaction should be either 'income' or 'expense' (lowercase)"
+            );
+          }
+        }
+      }
     });
   }
 };

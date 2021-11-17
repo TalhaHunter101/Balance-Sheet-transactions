@@ -57,7 +57,8 @@ exports.signup = function (req, res) {
       NewUser.save()
         .then((events) => {
           res.status(200).json({
-            success: `User registered :: Your authentication token is : ${token} `,
+            success: `User registered :: `,
+            Token: `Your authentication token is : ${token} `,
           });
         })
         .catch((err) => {
@@ -150,11 +151,10 @@ exports.login = function (req, res) {
             expiresIn: "2h",
           }
         );
-        res
-          .status(201)
-          .json({
-            mesg: `Login succesfull. Welcome ${user.Full_name} Your Authentication Token is : ${token}`,
-          });
+        res.status(201).json({
+          mesg: `Login succesfull. Welcome ${user.Full_name} `,
+          Token: `Your Authentication Token is : ${token}`,
+        });
       }
       //res.send(`Welcome :: ${user.Full_name} \n You are logged in...`);
     } else {

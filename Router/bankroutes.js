@@ -15,4 +15,5 @@ router.post(
   bankController.find_all_bankaccounts
 );
 router.post("/delete_bankaccount", auth, bankController.delete_bankaccount);
+router.post("/find_specific_account", auth, bankController.find_specific_bankaccount);
 module.exports = router;
