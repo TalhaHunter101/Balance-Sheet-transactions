@@ -20,25 +20,27 @@ app.use(express.json());
 // user Sign up and Sign in controlls
 exports.signup = function (req, res) {
   if (req.body.Full_name == "" || req.body.Full_name == undefined) {
-    res.status(404).send("Missing Full Name: try Again");
+    res.status(400).json({ Message: "Missing Full Name: try Again" });
     return;
   }
   if (req.body.Email == "" || req.body.Email == undefined) {
-    res.status(403).send("Missing Email:: Try again");
+    res.status(400).json({ Message: "Missing Email:: Try again" });
     return;
   }
   if (req.body.Password == "" || req.body.Password == undefined) {
-    res.status(400).send("Missing Password:: Try again");
+    res.status(400).json({ Message: "Missing Password:: Try again" });
     return;
   }
   if (Evalid.validateEmailAddress(req.body.Email) === -1) {
-    res.status(405).send("Incorrect email :: Enter again");
+    res.status(400).json({ Message: "Incorrect email :: Enter again" });
     return;
   }
   User.findOne({ Email: req.body.Email }).then((user) => {
     if (user) {
       // user already present
-      return res.status(500).send("You are already registered ...");
+      return res
+        .status(409)
+        .json({ Message: "You are already registered ..." });
     } else {
       // creating new
       let NewUser = new User({
@@ -57,8 +59,8 @@ exports.signup = function (req, res) {
       NewUser.save()
         .then((events) => {
           res.status(200).json({
-            success: `User registered :: `,
-            Token: `Your authentication token is : ${token} `,
+            Message: `User registered`,
+            Token: `${token}`,
           });
         })
         .catch((err) => {
@@ -68,45 +70,52 @@ exports.signup = function (req, res) {
     }
   });
 };
+
 exports.reset_pass = function (req, res) {
   console.log(req.body);
   const { password, c_password, Token } = req.body;
 
   if (!password || !c_password || !Token) {
-    return res.status(300).json({ msg: "Please enter all fields" });
+    return res.status(400).json({ Message: "Please enter all fields" });
   } else if (password != c_password) {
-    return res.status(404).json({ msg: "Password Mismatched:: Enter again" });
+    return res
+      .status(400)
+      .json({ Message: "Password mismatched :: Enter Again" });
   } else if (password.length < 6 || c_password.length < 6) {
-    return res.status(402).json({
-      msg: "Passward length should be 8 char minimum:: Enter again",
+    return res.status(400).json({
+      Message: "Passward length should be 6 char minimum:: Enter again",
     });
   } else {
     // yaha per haie ab ham
     token
       .findOne({ Token })
       .then((userT) => {
-        console.log(userT._id);
         if (userT === null || !userT) {
-          res.status(501).send("Token is incorrect::: Enter Again");
+          res
+            .status(404)
+            .json({ Message: "Token is incorrect ::: Enter Again" });
         } else {
           const hashpass = bcrypt.hashSync(password, 10);
-
+          console.log(hashpass);
           User.findByIdAndUpdate(
             userT.Owner_id,
             { Password: hashpass },
             (err, docx) => {
               if (!docx) {
                 console.log(err);
-                res.send("User with token not found..");
+                res
+                  .status(404)
+                  .json({ Message: "User with token not found.." });
               } else {
-                res.send("Password Changed.....");
                 token.findByIdAndDelete(userT._id, (err, docs) => {
                   if (err) {
-                    console.log(err);
+                    res
+                      .status(400)
+                      .json({ Message: "Error in deletion of token" });
                   } else {
-                    console.log(
-                      "Password changed and token deleted from token db"
-                    );
+                    res
+                      .status(200)
+                      .json({ Message: "Password Changed and token cleared" });
                   }
                 });
               }
@@ -117,32 +126,28 @@ exports.reset_pass = function (req, res) {
       .catch();
   }
 };
-exports.login = function (req, res) {
-  console.log(req.body);
 
+exports.login = function (req, res) {
   if (req.body.email == "" || req.body.email == undefined) {
-    res.status(400).send("Invalid Details:: Try again");
+    res.status(400).json({ Message: "Missing Email : Enter again" });
     return;
   } else if (req.body.password == "" || req.body.password == undefined) {
-    res.status(406).send("Invalid Details::: Try again");
+    res.status(400).json({ Message: "Missing Password : Enter again" });
     return;
   } else if (req.body.password.length < 6) {
-    res.status(401).send("Password should be at least 6 characters");
+    res
+      .status(411)
+      .json({ Message: "Password should be at least 6 characters" });
     return;
   } else if (Evalid.validateEmailAddress(req.body.email) === -1) {
-    res.status(408).send("Invalid Details: :: Enter again");
+    res.status(400).json({ Message: "Email format invalid  :: Enter again" });
     return;
   }
   User.findOne({ Email: req.body.email }).then((user) => {
-    // console.log(user);
     if (user) {
       // user Found in record
       const verifypass = bcrypt.compareSync(req.body.password, user.Password);
-      if (!verifypass) {
-        res.status(500).send("Invalid Details:::");
-        return;
-        //console.log(verifypass);
-      } else if (verifypass) {
+      if (verifypass == true) {
         const emil = req.body.email;
         const token = jwt.sign(
           { user_id: user._id, emil },
@@ -151,22 +156,23 @@ exports.login = function (req, res) {
             expiresIn: "2h",
           }
         );
-        res.status(201).json({
-          mesg: `Login succesfull. Welcome ${user.Full_name} `,
-          Token: `Your Authentication Token is : ${token}`,
+        res.status(200).json({
+          Message: `Login succesfull :: Welcome ${user.Full_name} `,
+          Token: `${token}`,
+        });
+      } else {
+        res.status(400).json({
+          Message: `Incorrect Credentials`,
         });
       }
-      //res.send(`Welcome :: ${user.Full_name} \n You are logged in...`);
     } else {
-      res.status(402).send("Invalid Details:::");
+      res.status(400).json({ Message: "You are not our registered user" });
       return;
     }
   });
 };
 exports.forget_pass = function (req, res) {
   const { email } = req.body;
-  console.log(req.body);
-  //res.send(`body recieved ${(email, password)}`);
   var tooken;
   const DOMAIN = "sandbox582feb5a5e3746b58635b2b00cecbf75.mailgun.org";
   const mg = mailgun({
@@ -175,23 +181,25 @@ exports.forget_pass = function (req, res) {
   });
 
   if (!email) {
-    return res.status(300).json({ msg: "Please provide email address" });
+    return res.status(400).json({ Message: "Please provide email address" });
   } else if (Evalid.validateEmailAddress(email) === -1) {
-    return res.send("Email not valid:: Enter again");
+    return res.status(400).json({ Message: "Email not valid:: Enter again" });
   } else {
     User.findOne({ Email: email })
       .then((user) => {
         if (!user) {
-          res.status(200).send("You are not registered:: Go Signup...");
+          res
+            .status(404)
+            .json({ Message: "You are not registered:: Go Signup..." });
           return;
         } else {
           token
             .findOne({ Owner_id: user._id })
             .then(function (F_id) {
               if (F_id) {
-                res
-                  .status(403)
-                  .send("Your token already sent.. Check your email");
+                res.status(502).json({
+                  Message: "Your token already sent.. Check your email",
+                });
                 return;
               }
               if (!F_id) {
@@ -211,11 +219,9 @@ exports.forget_pass = function (req, res) {
                     console.log(body);
                   });
 
-                  res
-                    .status(444)
-                    .send(
-                      `Visit this Link to reset password: http://localhost:5000/Reset_password Your token is  sent to ${email}`
-                    );
+                  res.status(200).json({
+                    Message: `Visit this Link to reset password: http://localhost:5000/Reset_password Your token is  sent to ${email}`,
+                  });
                 });
               }
             })
@@ -227,7 +233,7 @@ exports.forget_pass = function (req, res) {
       })
       .catch((err) => {
         console.log(err);
-        res.send("Errorrrr..");
+        res.json({ Message: "Errorrrr.." });
         res.end();
       });
   }
