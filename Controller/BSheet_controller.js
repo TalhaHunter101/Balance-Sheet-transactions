@@ -49,6 +49,7 @@ exports.createB = async (req, res) => {
 };
 
 exports.find_all_bankaccounts = function (req, res) {
+  // all or specific
   const useremail = req.user.emil;
 
   User.findOne({ Email: useremail }).then((userU) => {
@@ -62,23 +63,41 @@ exports.find_all_bankaccounts = function (req, res) {
         return;
       } else {
         // salary or current
-        BAccount.find(
-          {
-            _id: { $in: userU.BankAccount },
-            // accountName: req.body.accountname,
-          },
-          (err, docs) => {
-            if (docs) {
-              console.log(docs);
-              res.status(200).json({
-                Message: `Your bank Accounts details are :`,
-                Data: String(docs),
-              });
-            } else {
-              res.status(406).json({ Message: "No account Found " });
+        if (!req.body.accountname) {
+          BAccount.find(
+            {
+              _id: { $in: userU.BankAccount },
+              // accountName: req.body.accountname,
+            },
+            (err, docs) => {
+              if (docs) {
+                res.status(200).json({
+                  Message: `Your bank Accounts details are :`,
+                  Data: docs,
+                });
+              } else {
+                res.status(406).json({ Message: "No account Found " });
+              }
             }
-          }
-        );
+          );
+        } else {
+          BAccount.find(
+            {
+              _id: { $in: userU.BankAccount },
+              accountName: { $regex: new RegExp(req.body.accountname, "i") },
+            },
+            (err, docs) => {
+              if (docs && docs != "") {
+                res.status(200).json({
+                  Message: `Your bank Accounts details are :`,
+                  Data: docs,
+                });
+              } else {
+                res.status(406).json({ Message: "No account Found " });
+              }
+            }
+          );
+        }
       }
     }
   });
@@ -126,7 +145,7 @@ exports.delete_bankaccount = function (req, res) {
                   }
                 );
               } else {
-                res.status(404).json({ Message: "No account Found " });
+                res.status(404).json({ Message: "No Bank account Found " });
               }
             }
           );
@@ -152,20 +171,16 @@ exports.find_specific_bankaccount = async (req, res) => {
         BAccount.findOne(
           {
             _id: { $in: userU.BankAccount },
-            accountName: req.body.accountname,
+            accountName: { $regex: new RegExp(req.body.accountname, "i") },
           },
           (err, docs) => {
             if (docs) {
               res.status(200).json({
                 Message: `Your bank Accounts details are :`,
-                Data: {
-                  Name: ` ${docs.accountName}`,
-                  Balance: `${docs.balance}`,
-                  Transactions: `${docs.Transaction}`,
-                },
+                Data: docs,
               });
             } else {
-              res.status(400).json({ Message: "No bank account Found " });
+              res.status(404).json({ Message: "No bank account Found " });
             }
           }
         );

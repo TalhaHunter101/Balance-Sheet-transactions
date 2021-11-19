@@ -19,23 +19,23 @@ app.use(express.json());
 
 // user Sign up and Sign in controlls
 exports.signup = function (req, res) {
-  if (req.body.Full_name == "" || req.body.Full_name == undefined) {
+  if (req.body.fullName == "" || req.body.fullName == undefined) {
     res.status(400).json({ Message: "Missing Full Name: try Again" });
     return;
   }
-  if (req.body.Email == "" || req.body.Email == undefined) {
+  if (req.body.email == "" || req.body.email == undefined) {
     res.status(400).json({ Message: "Missing Email:: Try again" });
     return;
   }
-  if (req.body.Password == "" || req.body.Password == undefined) {
+  if (req.body.password == "" || req.body.password == undefined) {
     res.status(400).json({ Message: "Missing Password:: Try again" });
     return;
   }
-  if (Evalid.validateEmailAddress(req.body.Email) === -1) {
+  if (Evalid.validateEmailAddress(req.body.email) === -1) {
     res.status(400).json({ Message: "Incorrect email :: Enter again" });
     return;
   }
-  User.findOne({ Email: req.body.Email }).then((user) => {
+  User.findOne({ Email: req.body.email }).then((user) => {
     if (user) {
       // user already present
       return res
@@ -44,11 +44,11 @@ exports.signup = function (req, res) {
     } else {
       // creating new
       let NewUser = new User({
-        Full_name: req.body.Full_name,
-        Email: req.body.Email,
-        Password: req.body.Password,
+        Full_name: req.body.fullName,
+        Email: req.body.email,
+        Password: req.body.password,
       });
-      const emil = req.body.Email;
+      const emil = req.body.email;
       const token = jwt.sign(
         { user_id: NewUser._id, emil },
         process.env.TOKEN_SECRET,

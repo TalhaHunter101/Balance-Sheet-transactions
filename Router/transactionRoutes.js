@@ -11,32 +11,32 @@ router.use(
 
 /// New transaction controller according to new schema
 router.post("/new_transaction",auth, transactionController.new_transaction);
-router.post(
+router.get(
   "/find_by_type",
   auth,
   transactionController.find_all_transaction_by_type
 );
-router.post(
+router.get(
   "/find_by_category",
   auth,
   transactionController.find_all_transaction_by_category
 );
-router.post(
+router.put(
   "/update_transaction",
   auth,
   transactionController.Update_transaction
 );
-router.post(
+router.get(
   "/find_by_dates",
   auth,
   transactionController.find_transaction_by_date
 );
-router.post(
+router.delete(
   "/delete_by_transaction",
   auth,
   transactionController.Delete_tansaction
 );
-router.post(
+router.get(
   "/find_transaction_allfilter",
   auth,
   transactionController.find_transaction_filter_all

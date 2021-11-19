@@ -9,11 +9,11 @@ router.use(
 );
 // new try with different schema
 router.post("/createB", auth, bankController.createB);
-router.post(
+router.get(
   "/find_all_bankaccount",
   auth,
   bankController.find_all_bankaccounts
 );
-router.post("/delete_bankaccount", auth, bankController.delete_bankaccount);
-router.post("/find_specific_account", auth, bankController.find_specific_bankaccount);
+router.delete("/delete_bankaccount", auth, bankController.delete_bankaccount);
+router.get("/find_specific_account", auth, bankController.find_specific_bankaccount);
 module.exports = router;

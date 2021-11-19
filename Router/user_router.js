@@ -8,11 +8,9 @@ router.use(
 );
 //routing User  to controller
 router.post("/signup", userController.signup); // generating token
-router.post("/resetPass", userController.reset_pass);
-router.post("/ForgetPass", userController.forget_pass);
+router.put("/resetPass", userController.reset_pass);
+router.get("/ForgetPass", userController.forget_pass);
 router.post("/login", userController.login); // generating token
 
-// create user and bankaccount scheme
-// router.post("/createU", userController.createU);
 
 module.exports = router;
